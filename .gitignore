@@ -1,0 +1,45 @@
+# Ignora la carpeta node_modules (dependencias de Node.js)
+node_modules/
+
+# Ignora el archivo .env (variables de entorno sensibles)
+.env
+
+# Ignora archivos de configuración local
+*.local
+
+# Ignora archivos de registro
+*.log
+
+# Ignora archivos de depuración
+*.pid
+*.seed
+
+# Ignora carpetas de distribución
+dist/
+build/
+
+# Ignora archivos de IDE/Editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignora archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignora archivos de npm
+npm-debug.log*
+
+# Ignora archivos de yarn
+yarn-debug.log*
+yarn-error.log*
+
+# Ignora archivos de testing
+coverage/
+
+# Ignora archivos de MongoDB
+/data/db/
