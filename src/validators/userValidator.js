@@ -15,11 +15,11 @@ const validateUser = [
   body('email').isEmail().withMessage('El correo electrónico no es válido')
     .normalizeEmail(),
 
-  body('phone')
-    .notEmpty().withMessage('El telefono es requerido')
-    .matches(/^[0-9]+$/).withMessage('El teléfono solo debe contener números')
-    .trim()
-    .isLength({ min: 7, max: 15 }).withMessage('El numero debe tener al menos 7 y maximo 15 caracteres'),
+  // body('phone')
+  //   .notEmpty().withMessage('El telefono es requerido')
+  //   .matches(/^[0-9]+$/).withMessage('El teléfono solo debe contener números')
+  //   .trim()
+  //   .isLength({ min: 7, max: 15 }).withMessage('El numero debe tener al menos 7 y maximo 15 caracteres'),
 
   body('role')
   .notEmpty().withMessage('El rol es requerido')

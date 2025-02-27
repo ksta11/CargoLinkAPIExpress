@@ -65,6 +65,17 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
+exports.getRoleUser = async (req, res) => {
+  try {
+    const role = req.user.role; // Obtener el rol del del usuario desde req.user
+
+    res.status(200).json({ role });
+  } catch (err) {
+    console.error('Error al obtener el rol:', err);
+    res.status(500).json({ message: 'Error al obtener el rol', error: err.message });
+  }
+};
+
 exports.getUserWithVehicles = async (req, res) => {
   try {
     const userId = req.user.id;
