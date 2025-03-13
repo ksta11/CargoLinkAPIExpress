@@ -95,7 +95,7 @@ exports.getUserWithVehicles = async (req, res) => {
 exports.updateCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde req.user
-    const { name, email, role, password } = req.body;
+    const { name, lastname, email, phone, role, password } = req.body;
 
     // Buscar el usuario por ID
     const user = await User.findById(userId);
@@ -105,7 +105,9 @@ exports.updateCurrentUser = async (req, res) => {
 
     // Actualizar los campos proporcionados
     if (name) user.name = name;
+    if (lastname) user.lastname = lastname;
     if (email) user.email = email;
+    if (phone) user.phone = phone;
     if (role) user.role = role;
     if (password) {
       // Hashear la nueva contraseña
@@ -128,7 +130,7 @@ exports.updateCurrentUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const userId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
-    const { name, email, role, password } = req.body;
+    const { name, lastname, email, phone, role, password } = req.body;
 
     // Buscar el usuario por ID
     const user = await User.findById(userId);
@@ -138,7 +140,9 @@ exports.updateUser = async (req, res) => {
 
     // Actualizar los campos proporcionados
     if (name) user.name = name;
+    if (lastname) user.lastname = lastname;
     if (email) user.email = email;
+    if (phone) user.phone = phone;
     if (role) user.role = role;
     if (password) {
       // Hashear la nueva contraseña

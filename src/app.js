@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
+const shipmentRoutes = require('./routes/shipmentRoutes');
 
 // Cargar variables de entorno
 dotenv.config();
@@ -25,6 +26,9 @@ app.use('/api/auth', authRoutes);
 
 // Rutas 
 app.use('/api/users', userRoutes);
+
+app.use('/api/shipments', shipmentRoutes);
+
 
 // Ruta de inicio
 app.get('/', (req, res) => {
