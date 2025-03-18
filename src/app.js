@@ -1,8 +1,9 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const userRoutes = require('./routes/userRoutes');
-const authRoutes = require('./routes/authRoutes');
-const shipmentRoutes = require('./routes/shipmentRoutes');
+import express from 'express';
+import dotenv from 'dotenv';
+import userRoutes from './routes/userRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import shipmentRoutes from './routes/shipmentRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -29,6 +30,8 @@ app.use('/api/users', userRoutes);
 
 app.use('/api/shipments', shipmentRoutes);
 
+app.use('/api/admin', adminRoutes);
+
 
 // Ruta de inicio
 app.get('/', (req, res) => {
@@ -41,4 +44,4 @@ app.use((err, req, res, next) => {
   res.status(500).send('¡Algo salió mal!');
 });
 
-module.exports = app;
+export default app;

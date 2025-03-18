@@ -1,7 +1,7 @@
-const { body } = require('express-validator');
+import { body } from 'express-validator';
 
 // Validaciones para crear un envío
-const validateShipment = [
+export const validateShipment = [
   body('imageUrl')
     .notEmpty().withMessage('La dirección de la imagen es requerida'),
 
@@ -57,7 +57,7 @@ const validateShipment = [
 ];
 
 // Validaciones para actualizar un envío
-const validateShipmentUpdate = [
+export const validateShipmentUpdate = [
   body('pickupAddress')
     .optional() // La dirección de recogida es opcional al actualizar
     .trim()
@@ -110,5 +110,3 @@ const validateShipmentUpdate = [
     .optional() // El transportador es opcional al actualizar
     .isMongoId().withMessage('El ID del transportador no es válido'),
 ];
-
-module.exports = { validateShipment, validateShipmentUpdate };

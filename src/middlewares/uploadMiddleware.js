@@ -11,4 +11,4 @@
 //   },
 // });
 
-// module.exports = upload;
+// export default upload;

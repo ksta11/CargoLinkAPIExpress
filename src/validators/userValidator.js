@@ -1,7 +1,7 @@
-const { body } = require('express-validator');
+import { body } from 'express-validator';
 
 // Validaciones para crear un usuario
-const validateUser = [
+export const validateUser = [
   body('name')
     .notEmpty().withMessage('El nombre es requerido')
     .trim()
@@ -31,7 +31,7 @@ const validateUser = [
 ];
 
 // Validaciones para actualizar un usuario
-const validateUserUpdate = [
+export const validateUserUpdate = [
   body('name')
     .notEmpty().withMessage('El nombre es requerido')
     .trim()
@@ -59,5 +59,3 @@ const validateUserUpdate = [
     .isLength({ min: 5, max: 30 }).withMessage('La contraseña debe tener al menos 5 y maximo 30 caracteres')
     .trim(),
 ];
-
-module.exports = { validateUser, validateUserUpdate };

@@ -1,8 +1,9 @@
-const User = require('../models/User');
-const { createUser } = require('../services/userService');
-const bcrypt = require('bcryptjs');
+import User from '../models/User.js';
+import { createDUser } from '../services/userService.js';
+import bcrypt from 'bcryptjs';
 
-exports.getUsers = async (req, res) => {
+
+export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -12,7 +13,7 @@ exports.getUsers = async (req, res) => {
 };
 
 // Obtener la lista de todos los usuarios (solo para administradores)
-// exports.getAllUsers = async (req, res) => {
+// export const getAllUsers = async (req, res) => {
 //   try {
 //     const users = await User.find().select('-password'); // Excluir contraseñas
 //     res.status(200).json({ users });
@@ -22,12 +23,12 @@ exports.getUsers = async (req, res) => {
 //   }
 // };
 
-exports.createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   try {
     const { name, lastname, email, phone, role, password } = req.body;
 
     // Crear el usuario usando la función reutilizable
-    const newUser = await createUser({ name, lastname, email, phone, role, password });
+    const newUser = await createDUser({ name, lastname, email, phone, role, password });
 
     // Respuesta exitosa
     res.status(201).json({ message: 'Usuario creado exitosamente', user: newUser });
@@ -37,7 +38,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-exports.getUser = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
     const userId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
     const user = await User.findById(userId)/*.select('-password')*/; // Excluir la contraseña
@@ -51,7 +52,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.getCurrentUser = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde req.user
     const user = await User.findById(userId)/*.select('-password')*/; // Excluir la contraseña
@@ -65,7 +66,7 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
-exports.getRoleUser = async (req, res) => {
+export const getRoleUser = async (req, res) => {
   try {
     const role = req.user.role; // Obtener el rol del del usuario desde req.user
 
@@ -76,7 +77,7 @@ exports.getRoleUser = async (req, res) => {
   }
 };
 
-exports.getUserWithVehicles = async (req, res) => {
+export const getUserWithVehicles = async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -92,7 +93,7 @@ exports.getUserWithVehicles = async (req, res) => {
 };
 
 // Actualizar un usuario
-exports.updateCurrentUser = async (req, res) => {
+export const updateCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde req.user
     const { name, lastname, email, phone, role, password } = req.body;
@@ -127,7 +128,7 @@ exports.updateCurrentUser = async (req, res) => {
 };
 
 // Actualizar un usuario por ID (solo para administradores)
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const userId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
     const { name, lastname, email, phone, role, password } = req.body;
@@ -162,7 +163,7 @@ exports.updateUser = async (req, res) => {
 };
 
 // Eliminar un usuario
-exports.deleteCurrentUser = async (req, res) => {
+export const deleteCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde req.user
 
@@ -181,7 +182,7 @@ exports.deleteCurrentUser = async (req, res) => {
 };
 
 // Eliminar un usuario por ID (solo para administradores)
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
 

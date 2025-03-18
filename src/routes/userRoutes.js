@@ -1,25 +1,28 @@
-const express = require('express');
+import express from 'express';
+import { createUser, 
+    getCurrentUser, 
+    getRoleUser, 
+    getUser, 
+    getUserWithVehicles, 
+    getUsers, 
+    updateCurrentUser, 
+    updateUser, 
+    deleteCurrentUser, 
+    deleteUser } from '../controllers/userController.js';
+import { validateUser, validateUserUpdate } from '../validators/userValidator.js';
+import validateRequest from '../middlewares/validateRequest.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import roleMiddleware from '../middlewares/roleMiddleware.js';
+
 const router = express.Router();
-const userController = require('../controllers/userController');
-const { validateUser, validateUserUpdate } = require('../validators/userValidator');
-const validateRequest = require('../middlewares/validateRequest');
-const authMiddleware = require('../middlewares/authMiddleware');
-const roleMiddleware = require('../middlewares/roleMiddleware');
 
-router.get('/', authMiddleware, roleMiddleware(['admin']), userController.getUsers);   // Obtener todos los usuarios (Admin)
+router.get('/role', authMiddleware, getRoleUser);
 
-router.get('/role', authMiddleware, userController.getRoleUser);
+router.get('/profile', authMiddleware, getCurrentUser);     // Obtener el usuario propio (usuario)
 
-router.get('/profile', authMiddleware, userController.getCurrentUser);     // Obtener el usuario propio (usuario)
+router.put('/profile',  authMiddleware, validateRequest(validateUserUpdate), updateCurrentUser);      // Actualizar el usuario propio (usuario)
 
-router.get('/:id', authMiddleware, roleMiddleware(['admin']), userController.getUser);     // Obtener un usuario (Admin)
-
-router.post('/', authMiddleware, roleMiddleware(['admin']), validateRequest(validateUser), userController.createUser);    // Crear un usuario (Admin)
-
-router.put('/profile',  authMiddleware, validateRequest(validateUserUpdate), userController.updateCurrentUser);      // Actualizar el usuario propio (usuario)
-router.put('/:id', authMiddleware, validateRequest(validateUserUpdate), roleMiddleware(['admin']), userController.updateUser);     // Actualizar un usuario (Admin)
-router.delete('/profile', authMiddleware, userController.deleteCurrentUser);    // Borrar su propio usuario (usuario)
-router.delete('/:id', authMiddleware, roleMiddleware(['admin']), userController.deleteUser);    // Borrar un usuario (Admin)
+router.delete('/profile', authMiddleware, deleteCurrentUser);    // Borrar su propio usuario (usuario)
 
 
-module.exports = router;
+export default router;

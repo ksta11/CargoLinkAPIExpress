@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const shipmentSchema = new mongoose.Schema({
   imageUrl: { type: String, required: false },
@@ -23,4 +23,4 @@ const shipmentSchema = new mongoose.Schema({
   transporter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
-module.exports = mongoose.model('Shipment', shipmentSchema);
+export default mongoose.model('Shipment', shipmentSchema);

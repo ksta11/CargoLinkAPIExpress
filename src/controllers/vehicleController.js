@@ -1,6 +1,6 @@
-const Vehicle = require('../models/Vehicle');
+import Vehicle from '../models/Vehicle.js';
 
-exports.createVehicle = async (req, res) => {
+export const createVehicle = async (req, res) => {
     try {
       const { brand, model, year, plate } = req.body;
       const userId = req.user.id; // Obtener el ID del usuario desde el token (usando authMiddleware)
@@ -17,7 +17,7 @@ exports.createVehicle = async (req, res) => {
     }
 };
 
-exports.getUserVehicles = async (req, res) => {
+export const getUserVehicles = async (req, res) => {
     try {
       const userId = req.user.id; // Obtener el ID del usuario desde el token
   

@@ -26,4 +26,4 @@ import axios from 'axios'
 //   }
 // };
 
-// module.exports = { uploadImage };
+// export default { uploadImage };

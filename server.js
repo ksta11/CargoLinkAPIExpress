@@ -1,5 +1,6 @@
-const connectDB = require('./src/config/db');
-const app = require('./src/app');
+import connectDB from './src/config/db.js';
+import app from './src/app.js';
+
 const PORT = process.env.PORT || 3336;
 
 // Conectar a MongoDB

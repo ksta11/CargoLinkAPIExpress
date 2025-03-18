@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const vehicleSchema = new mongoose.Schema({
   type: {type: String, enum: ['car', 'truck', 'pick-up', '4x4', 'van', 'motorcycle'], default: 'car' },
@@ -9,4 +9,4 @@ const vehicleSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Referencia al usuario
 });
 
-module.exports = mongoose.model('Vehicle', vehicleSchema);
+export default mongoose.model('Vehicle', vehicleSchema);

@@ -1,15 +1,15 @@
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const generateToken = require('../utils/generateToken');
-const { createUser } = require('../services/userService');
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
+import generateToken from '../utils/generateToken.js';
+import { createDUser } from '../services/userService.js';
 
 // Registrar un nuevo usuario
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { name, lastname, email, phone, role, password } = req.body;
 
     // Crear el usuario usando la función reutilizable
-    const newUser = await createUser({ name, lastname, email, phone, role, password });
+    const newUser = await createDUser({ name, lastname, email, phone, role, password });
 
     // Generar token JWT
     const token = generateToken(newUser._id, newUser.role);
@@ -23,7 +23,7 @@ exports.register = async (req, res) => {
 };
 
 // Iniciar sesión
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 

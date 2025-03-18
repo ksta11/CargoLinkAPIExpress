@@ -1,7 +1,7 @@
-const Shipment = require('../models/Shipment');
+import Shipment from '../models/Shipment.js';
 
 // Obtener todos los envíos (para administradores)
-exports.getAllShipments = async (req, res) => {
+export const getAllShipments = async (req, res) => {
   try {
     const shipments = await Shipment.find()
       .populate('client', 'name email phone') // Populate con información básica del cliente
@@ -14,7 +14,7 @@ exports.getAllShipments = async (req, res) => {
 };
 
 // Obtener envíos del usuario específico (cliente o transportador)
-exports.getUserShipments = async (req, res) => {
+export const getUserShipments = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde los parámetros de la URL
     const shipments = await Shipment.find({
@@ -33,7 +33,7 @@ exports.getUserShipments = async (req, res) => {
   }
 };
 
-exports.getAvailableShipments = async (req, res) => {
+export const getAvailableShipments = async (req, res) => {
   try{
     const shipments = await Shipment.find({ status: 'activated' })
     .populate('client', 'name email phone') // Populate con información básica del cliente
@@ -47,9 +47,9 @@ exports.getAvailableShipments = async (req, res) => {
     console.error('Error al obtener envíos disponibles:', err);
     res.status(500).json({ message: 'Error al obtener envíos disponibles', error: err.message });
   }
-}
+};
 
-exports.getShipment = async (req, res) => {
+export const getShipment = async (req, res) => {
   try {
     const shipmentId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
     const shipment = await Shipment.findById(shipmentId)/*.select('-password')*/; // Excluir la contraseña
@@ -61,10 +61,10 @@ exports.getShipment = async (req, res) => {
     console.error('Error al obtener flete:', err);
     res.status(500).json({ message: 'Error al obtener flete', error: err.message });
   }
-}
+};
 
 // Crear un nuevo envío
-exports.createShipment = async (req, res) => {
+export const createShipment = async (req, res) => {
   try {
     const { imageUrl, pickupAddress, deliveryAddress, description, title, weight, dimensions, pickupTime } = req.body;
     const userId = req.user.id; // Obtener el ID del usuario desde el token (usando authMiddleware)
@@ -95,7 +95,7 @@ exports.createShipment = async (req, res) => {
 };
 
 // Actualizar un envío (por ejemplo, asignar un transportador o cambiar el estado)
-exports.updateShipment = async (req, res) => {
+export const updateShipment = async (req, res) => {
   try {
     const shipmentId = req.params.id; // Obtener el ID del envío desde los parámetros de la URL
     const updateData = req.body; // Datos para actualizar
@@ -119,7 +119,7 @@ exports.updateShipment = async (req, res) => {
 };
 
 // Eliminar un envío
-exports.deleteShipment = async (req, res) => {
+export const deleteShipment = async (req, res) => {
   try {
     const shipmentId = req.params.id; // Obtener el ID del envío desde los parámetros de la URL
 

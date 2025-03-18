@@ -1,11 +1,7 @@
+import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
 
-
-
-// src/services/userService.js
-const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-
-const createUser = async (userData) => {
+export const createDUser = async (userData) => {
   try {
     const { name, lastname, email, phone, role, password } = userData;
 
@@ -30,5 +26,3 @@ const createUser = async (userData) => {
     throw new Error(err.message);
   }
 };
-
-module.exports = { createUser };

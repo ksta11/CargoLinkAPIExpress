@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { register, login } from '../controllers/authController.js';
+import { validateUser, validateUserUpdate } from '../validators/userValidator.js';
+import validateRequest from '../middlewares/validateRequest.js';
+
 const router = express.Router();
-const { register, login } = require('../controllers/authController');
-const { validateUser, validateUserUpdate } = require('../validators/userValidator');
-const validateRequest = require('../middlewares/validateRequest');
 
 // Registrar un nuevo usuario
 router.post('/register', validateRequest(validateUser), register); // Crear usuario y token (Cualquiera)
@@ -10,4 +11,4 @@ router.post('/register', validateRequest(validateUser), register); // Crear usua
 // Iniciar sesión
 router.post('/login', login); // Crear token (Cualquiera)
 
-module.exports = router;
+export default router;
