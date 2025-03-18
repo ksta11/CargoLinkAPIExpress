@@ -17,7 +17,7 @@ router.get('/', authMiddleware, roleMiddleware(['admin']), getAllShipments);
 
 router.get('/me', authMiddleware, getUserShipments);
 
-router.get('/available', authMiddleware, roleMiddleware(['user'])/*Cambiar a transporter*/, getAvailableShipments);
+router.get('/available', authMiddleware, roleMiddleware(['transporter']), getAvailableShipments);
 
 router.get('/:id', authMiddleware, roleMiddleware(['user']), getShipment);
 
