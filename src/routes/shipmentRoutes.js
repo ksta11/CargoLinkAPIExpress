@@ -10,7 +10,7 @@ router.get('/', authMiddleware, roleMiddleware(['admin']), shipmentController.ge
 
 router.get('/me', authMiddleware, shipmentController.getUserShipments);
 
-router.get('/available', authMiddleware, roleMiddleware(['user'])/*Cambiar a transporter*/, shipmentController.getAvailableShipments);
+router.get('/available', authMiddleware, roleMiddleware(['transporter'])/*Cambiar a transporter*/, shipmentController.getAvailableShipments);
 
 router.get('/:id', authMiddleware, roleMiddleware(['user']), shipmentController.getShipment);
 
