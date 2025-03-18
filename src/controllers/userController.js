@@ -31,7 +31,7 @@ export const createUser = async (req, res) => {
     const newUser = await createDUser({ name, lastname, email, phone, role, password });
 
     // Respuesta exitosa
-    res.status(201).json({ message: 'Usuario creado exitosamente', user: newUser });
+    res.status(201).json({ message: 'Usuario creado exitosamente', newUser });
   } catch (err) {
     console.error('Error al crear usuario:', err);
     res.status(400).json({ message: err.message });
@@ -174,7 +174,7 @@ export const deleteCurrentUser = async (req, res) => {
     }
 
     // Respuesta exitosa
-    res.status(200).json({ message: 'Usuario eliminado exitosamente', user: deletedUser });
+    res.status(200).json({ message: 'Usuario eliminado exitosamente' });
   } catch (err) {
     console.error('Error al eliminar usuario:', err);
     res.status(500).json({ message: 'Error al eliminar usuario', error: err.message });
@@ -193,7 +193,7 @@ export const deleteUser = async (req, res) => {
     }
 
     // Respuesta exitosa
-    res.status(200).json({ message: 'Usuario eliminado exitosamente', user: deletedUser });
+    res.status(200).json({ message: 'Usuario eliminado exitosamente' });
   } catch (err) {
     console.error('Error al eliminar usuario:', err);
     res.status(500).json({ message: 'Error al eliminar usuario', error: err.message });

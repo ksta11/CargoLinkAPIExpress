@@ -15,7 +15,7 @@ export const register = async (req, res) => {
     const token = generateToken(newUser._id, newUser.role);
 
     // Respuesta exitosa
-    res.status(201).json({ message: 'Usuario registrado exitosamente', token, user: newUser });
+    res.status(201).json({ message: 'Usuario registrado exitosamente', token, newUser });
   } catch (err) {
     console.error('Error al registrar usuario:', err);
     res.status(400).json({ message: err.message });

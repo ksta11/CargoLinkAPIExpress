@@ -87,7 +87,7 @@ export const createShipment = async (req, res) => {
     await newShipment.save();
 
     // Respuesta exitosa
-    res.status(201).json({ message: 'Envío creado exitosamente', shipment: newShipment });
+    res.status(201).json({ message: 'Envío creado exitosamente', newShipment });
   } catch (err) {
     console.error('Error al crear un envío:', err);
     res.status(400).json({ message: err.message });
@@ -111,7 +111,7 @@ export const updateShipment = async (req, res) => {
       .populate('client', 'name email phone') // Populate con información básica del cliente
       .populate('transporter', 'name email phone'); // Populate con información básica del transportador
 
-    res.status(200).json({ message: 'Envío actualizado exitosamente', shipment: updatedShipment });
+    res.status(200).json({ message: 'Envío actualizado exitosamente', updatedShipment });
   } catch (err) {
     console.error('Error al actualizar el envío:', err);
     res.status(500).json({ message: 'Error al actualizar el envío', error: err.message });

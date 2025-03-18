@@ -1,6 +1,4 @@
 import User from '../models/User.js';
-import { createDUser } from '../services/userService.js';
-import bcrypt from 'bcryptjs';
 
 export const getUserWithVehicles = async (req, res) => {
   try {
