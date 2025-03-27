@@ -6,7 +6,7 @@ export const getAllShipments = async (req, res) => {
     const shipments = await Shipment.find()
       .populate('client', 'name email phone') // Populate con información básica del cliente
       .populate('transporter', 'name email phone'); // Populate con información básica del transportador
-    res.status(200).json({ shipments });
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
     console.error('Error al obtener envíos:', err);
     res.status(500).json({ message: 'Error al obtener envíos', error: err.message });
@@ -26,7 +26,7 @@ export const getUserShipments = async (req, res) => {
     if (!shipments || shipments.length === 0) {
       return res.status(404).json({ message: 'No se encontraron envíos para este usuario' });
     }
-    res.status(200).json({ shipments });
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
     console.error('Error al obtener envíos del usuario:', err);
     res.status(500).json({ message: 'Error al obtener envíos del usuario', error: err.message });
@@ -87,7 +87,7 @@ export const createShipment = async (req, res) => {
     await newShipment.save();
 
     // Respuesta exitosa
-    res.status(201).json({ message: 'Envío creado exitosamente', newShipment });
+    res.status(201).json({ message: 'Envío creado exitosamente', shipment: newShipment });
   } catch (err) {
     console.error('Error al crear un envío:', err);
     res.status(400).json({ message: err.message });

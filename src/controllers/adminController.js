@@ -2,11 +2,10 @@ import User from '../models/User.js';
 import { createDUser } from '../services/userService.js';
 import bcrypt from 'bcryptjs';
 
-
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const users = await User.find().select('-password');
+    res.status(200).json({ users: users.map(user => ({ user })) });
   } catch (err) {
     res.status(500).send('Error al obtener usuarios');
   }
@@ -15,7 +14,7 @@ export const getUsers = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const userId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
-    const user = await User.findById(userId)/*.select('-password')*/; // Excluir la contraseña
+    const user = await User.findById(userId).select('-password'); // Excluir la contraseña
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -26,17 +25,6 @@ export const getUser = async (req, res) => {
   }
 };
 
-// Obtener la lista de todos los usuarios (solo para administradores)
-// export const getAllUsers = async (req, res) => {
-//   try {
-//     const users = await User.find().select('-password'); // Excluir contraseñas
-//     res.status(200).json({ users });
-//   } catch (err) {
-//     console.error('Error al obtener usuarios:', err);
-//     res.status(500).json({ message: 'Error al obtener usuarios', error: err.message });
-//   }
-// };
-
 export const createUser = async (req, res) => {
   try {
     const { name, lastname, email, phone, role, password } = req.body;
@@ -44,14 +32,16 @@ export const createUser = async (req, res) => {
     // Crear el usuario usando la función reutilizable
     const newUser = await createDUser({ name, lastname, email, phone, role, password });
 
-    // Respuesta exitosa
-    res.status(201).json({ message: 'Usuario creado exitosamente', newUser });
+    // Respuesta exitosa con datos directamente
+    res.status(201).json({
+      message: 'Usuario creado exitosamente',
+      user: newUser
+    });
   } catch (err) {
     console.error('Error al crear usuario:', err);
     res.status(400).json({ message: err.message });
   }
 };
-
 
 // Actualizar un usuario por ID (solo para administradores)
 export const updateUser = async (req, res) => {
@@ -104,5 +94,25 @@ export const deleteUser = async (req, res) => {
   } catch (err) {
     console.error('Error al eliminar usuario:', err);
     res.status(500).json({ message: 'Error al eliminar usuario', error: err.message });
+  }
+};
+
+// Buscar usuarios por término
+export const searchUsers = async (req, res) => {
+  try {
+    const { term } = req.query;
+
+    const users = await User.find({
+      $or: [
+        { name: { $regex: term, $options: 'i' } },
+        { email: { $regex: term, $options: 'i' } },
+        { lastname: { $regex: term, $options: 'i' } },
+      ],
+    }).select('-password');
+
+    res.status(200).json({ users: users.map(user => ({ user })) });
+  } catch (err) {
+    console.error('Error al buscar usuarios:', err);
+    res.status(500).json({ message: 'Error al buscar usuarios', error: err.message });
   }
 };

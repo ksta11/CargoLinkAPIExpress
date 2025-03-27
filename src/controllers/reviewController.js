@@ -9,7 +9,7 @@ export const createReview =  async (req, res) => {
         await newReview.save();
 
         // Respuesta exitosa
-        res.status(201).json({ message: 'Reseña creada exitosamente', newReview });
+        res.status(201).json({ message: 'Reseña creada exitosamente', review: newReview });
 
     } catch (err) {
         console.error('Error al crear una reseña:', err);

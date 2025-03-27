@@ -8,7 +8,8 @@ import { createUser,
     updateCurrentUser, 
     updateUser, 
     deleteCurrentUser, 
-    deleteUser } from '../controllers/userController.js';
+    deleteUser, 
+    verifyPassword} from '../controllers/userController.js';
 import { validateUser, validateUserUpdate } from '../validators/userValidator.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
@@ -24,5 +25,6 @@ router.put('/profile',  authMiddleware, validateRequest(validateUserUpdate), upd
 
 router.delete('/profile', authMiddleware, deleteCurrentUser);    // Borrar su propio usuario (usuario)
 
+router.post('/verify-password', authMiddleware, verifyPassword)
 
 export default router;
