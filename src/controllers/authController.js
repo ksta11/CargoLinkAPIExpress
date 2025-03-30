@@ -13,7 +13,7 @@ export const register = async (req, res) => {
     const newUser = await createDUser({ name, lastname, email, phone, role, password });
 
     // Generar token JWT
-    const token = generateToken(newUser._id, newUser.role);
+    const token = generateToken(newUser._id, newUser.role, newUser.email, newUser.name, newUser.lastname);
 
     // Respuesta exitosa
     res.status(201).json({ message: 'Usuario registrado exitosamente', token, user: newUser });
@@ -41,7 +41,7 @@ export const login = async (req, res) => {
     }
 
     // Generar token JWT
-    const token = generateToken(user._id, user.role);
+    const token = generateToken(user._id, user.role, user.email, user.name, user.lastname);
 
     // Respuesta exitosa
     res.status(200).json({ message: 'Inicio de sesión exitoso', token });
@@ -58,7 +58,10 @@ export const refreshToken = async (req, res) => {
     
     const userId = req.user.id;
     const role = req.user.id;
-    const newToken = generateToken(userId, role);
+    const email = req.user.email;
+    const name = req.user.name;
+    const lastname = req.user.lastname;
+    const token = generateToken(userId, role, email, name, lastname);
 
     // Respuesta exitosa con el nuevo token
     res.status(200).json({ message: 'Token refrescado exitosamente', token });
