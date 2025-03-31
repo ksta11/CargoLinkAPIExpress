@@ -1,6 +1,8 @@
 import User from '../models/User.js';
 import { createDUser } from '../services/userService.js';
 import bcrypt from 'bcryptjs';
+import Shipment from '../models/Shipment.js';
+import Report from '../models/Report.js';
 
 export const getUsers = async (req, res) => {
   try {
@@ -114,5 +116,22 @@ export const searchUsers = async (req, res) => {
   } catch (err) {
     console.error('Error al buscar usuarios:', err);
     res.status(500).json({ message: 'Error al buscar usuarios', error: err.message });
+  }
+};
+
+export const getGeneralStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalShipments = await Shipment.countDocuments();
+    const totalReports = await Report.countDocuments();
+
+    res.status(200).json({
+      totalUsers,
+      totalShipments,
+      totalReports,
+    });
+  } catch (err) {
+    console.error('Error al obtener estadísticas generales:', err);
+    res.status(500).json({ message: 'Error al obtener estadísticas generales', error: err.message });
   }
 };
