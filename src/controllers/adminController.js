@@ -3,11 +3,22 @@ import { createDUser } from '../services/userService.js';
 import bcrypt from 'bcryptjs';
 import Shipment from '../models/Shipment.js';
 import Report from '../models/Report.js';
+import { query } from 'express-validator';
+import mongoose, { Mongoose } from 'mongoose';
 
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
     res.status(200).json({ users: users.map(user => ({ user })) });
+  } catch (err) {
+    res.status(500).send('Error al obtener usuarios');
+  }
+};
+
+export const getShipments = async (req, res) => {
+  try {
+    const shipments = await Shipment.find().select('-password');
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
     res.status(500).send('Error al obtener usuarios');
   }
@@ -116,6 +127,32 @@ export const searchUsers = async (req, res) => {
   } catch (err) {
     console.error('Error al buscar usuarios:', err);
     res.status(500).json({ message: 'Error al buscar usuarios', error: err.message });
+  }
+};
+
+export const searchShipment = async (req, res) => {
+  try {
+    const { term } = req.query;
+    // const { term, userId } = req.query;
+
+    const shipments = await Shipment.find({
+      $or: [
+        { title: { $regex: term, $options: 'i' } }, 
+        { description: { $regex: term, $options: 'i' } },     
+      ],
+    });
+
+    // Filtrado por usuario (cliente)
+    // if (userId) {
+    //   query.client = new mongoose.Types.ObjectId(userId);
+    // }
+
+
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
+    
+  } catch (err) {
+    console.error('Error al buscar envíos:', err);
+    res.status(500).json({ message: 'Error al buscar envíos', error: err.message });
   }
 };
 
