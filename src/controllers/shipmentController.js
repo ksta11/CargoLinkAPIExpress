@@ -111,7 +111,7 @@ export const updateShipment = async (req, res) => {
       .populate('client', 'name email phone') // Populate con información básica del cliente
       .populate('transporter', 'name email phone'); // Populate con información básica del transportador
 
-    res.status(200).json({ message: 'Envío actualizado exitosamente', updatedShipment });
+    res.status(200).json({ message: 'Envío actualizado exitosamente', shipment: updatedShipment });
   } catch (err) {
     console.error('Error al actualizar el envío:', err);
     res.status(500).json({ message: 'Error al actualizar el envío', error: err.message });

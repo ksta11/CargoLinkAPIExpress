@@ -20,7 +20,7 @@ export const getShipments = async (req, res) => {
     const shipments = await Shipment.find().select('-password');
     res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
-    res.status(500).send('Error al obtener usuarios');
+    res.status(500).send('Error al obtener envios');
   }
 };
 

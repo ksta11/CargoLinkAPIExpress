@@ -5,7 +5,7 @@ import { validateShipmentUpdate } from '../validators/shipmentValidator.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import roleMiddleware from '../middlewares/roleMiddleware.js';
-import { deleteShipment, updateShipment } from '../controllers/shipmentController.js';
+import { deleteShipment, getShipment, updateShipment } from '../controllers/shipmentController.js';
 
 const router = express.Router();
 
@@ -20,6 +20,8 @@ router.get('/shipments/search', authMiddleware, roleMiddleware(['admin']), searc
 router.get('/stats', authMiddleware, roleMiddleware(['admin']), getGeneralStats); // Obtener estadísticas generales (Admin)
 
 router.get('/:id', authMiddleware, roleMiddleware(['admin']), getUser);     // Obtener un usuario (Admin)
+
+router.get('/shipments/:id', authMiddleware, roleMiddleware(['admin']), getShipment);     // Obtener un envio (Admin)
 
 router.post('/', authMiddleware, roleMiddleware(['admin']), validateRequest(validateUser), createUser);    // Crear un usuario (Admin)
 
