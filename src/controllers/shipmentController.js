@@ -42,7 +42,7 @@ export const getAvailableShipments = async (req, res) => {
     if (!shipments || shipments.length === 0){
       return res.status(404).json({ message: 'No se encontraron envíos disponibles' });
     }
-    res.status(200).json({ shipments })
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) })
   } catch (err) {
     console.error('Error al obtener envíos disponibles:', err);
     res.status(500).json({ message: 'Error al obtener envíos disponibles', error: err.message });
