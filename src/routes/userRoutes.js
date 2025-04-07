@@ -9,7 +9,8 @@ import { createUser,
     updateUser, 
     deleteCurrentUser, 
     deleteUser, 
-    verifyPassword} from '../controllers/userController.js';
+    verifyPassword,
+    changePassword} from '../controllers/userController.js';
 import { validateUser, validateUserUpdate } from '../validators/userValidator.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
@@ -21,7 +22,9 @@ router.get('/role', authMiddleware, getRoleUser);
 
 router.get('/profile', authMiddleware, getCurrentUser);     // Obtener el usuario propio (usuario)
 
-router.put('/profile',  authMiddleware, validateRequest(validateUserUpdate), updateCurrentUser);      // Actualizar el usuario propio (usuario)
+router.put('/profile',  authMiddleware, validateRequest(validateUserUpdate), updateCurrentUser);
+
+router.put('/change-password', authMiddleware, changePassword); // Cambiar la contraseña del usuario propio (usuario)      // Actualizar el usuario propio (usuario)
 
 router.delete('/profile', authMiddleware, deleteCurrentUser);    // Borrar su propio usuario (usuario)
 

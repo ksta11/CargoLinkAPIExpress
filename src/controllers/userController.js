@@ -76,7 +76,7 @@ export const getUserWithVehicles = async (req, res) => {
 export const updateCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; // Obtener el ID del usuario desde req.user
-    const { name, lastname, email, phone, role, password } = req.body;
+    const { name, lastname, email, phone, role} = req.body;
 
     // Buscar el usuario por ID
     const user = await User.findById(userId);
@@ -90,11 +90,6 @@ export const updateCurrentUser = async (req, res) => {
     if (email) user.email = email;
     if (phone) user.phone = phone;
     if (role) user.role = role;
-    if (password) {
-      // Hashear la nueva contraseña
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
-    }
 
     // Guardar los cambios
     await user.save();
@@ -154,7 +149,7 @@ export const deleteCurrentUser = async (req, res) => {
     }
 
     // Respuesta exitosa
-    res.status(200).json({ message: 'Usuario eliminado exitosamente' });
+    res.status(200).json({ message: 'Usuario eliminado exitosamente', verify: true });
   } catch (err) {
     console.error('Error al eliminar usuario:', err);
     res.status(500).json({ message: 'Error al eliminar usuario', error: err.message });
@@ -169,11 +164,11 @@ export const deleteUser = async (req, res) => {
     // Buscar y eliminar el usuario por ID
     const deletedUser = await User.findByIdAndDelete(userId);
     if (!deletedUser) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'Usuario no encontrado', verify: false });
     }
 
     // Respuesta exitosa
-    res.status(200).json({ message: 'Usuario eliminado exitosamente' });
+    res.status(200).json({ message: 'Usuario eliminado exitosamente', verify: true });
   } catch (err) {
     console.error('Error al eliminar usuario:', err);
     res.status(500).json({ message: 'Error al eliminar usuario', error: err.message });
@@ -203,5 +198,37 @@ export const verifyPassword = async (req, res) => {
   } catch (err) {
     console.error('Error en verifyPassword:', err);
     res.status(500).json({ message: 'Error interno del servidor' });
+  }
+}
+
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id; // Obtener el ID del usuario desde req.user
+    const { password, newPassword } = req.body;
+
+    // Buscar el usuario por ID
+    const user = await User.findById(userId).select('+password');
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado', verify: false  });
+    }
+
+    // Comparar la contraseña antigua proporcionada con la almacenada (hasheada)
+    const isMatch = await bcrypt.compare(password, user.password); // Método personalizado del modelo User
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Contraseña incorrecta', verify: false  });
+    }
+
+    // Hashear la nueva contraseña
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    // Guardar los cambios
+    await user.save();
+
+    // Respuesta exitosa
+    res.status(200).json({ message: 'Contraseña actualizada exitosamente', verify: true });
+  } catch (err) {
+    console.error('Error al cambiar contraseña:', err);
+    res.status(500).json({ message: 'Error al cambiar contraseña', error: err.message });
   }
 }
