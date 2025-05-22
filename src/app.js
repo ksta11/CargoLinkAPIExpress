@@ -4,6 +4,8 @@ import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import shipmentRoutes from './routes/shipmentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
+import openaiAPIRoutes from './routes/openaiAPIRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -31,6 +33,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/shipments', shipmentRoutes);
 
 app.use('/api/admin', adminRoutes);
+
+app.use('/api/reports', reportRoutes);
+
+app.use('/api/openai', openaiAPIRoutes);
 
 
 // Ruta de inicio

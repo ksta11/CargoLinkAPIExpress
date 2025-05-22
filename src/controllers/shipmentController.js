@@ -33,6 +33,85 @@ export const getUserShipments = async (req, res) => {
   }
 };
 
+// Obtener detalles de un envío específico para transportador
+export const getShipmentDetailsForTransporter = async (req, res) => {
+  try {
+    const shipmentId = req.params.id;
+    const transporterId = req.user.id;
+    
+    // Buscar el envío por ID
+    const shipment = await Shipment.findById(shipmentId)
+      .populate('client', 'name email phone') // Información básica del cliente
+      .populate('transporter', 'name email phone'); // Información básica del transportador
+    
+    if (!shipment) {
+      return res.status(404).json({ message: 'Envío no encontrado' });
+    }
+    
+    // Verificar si el estado del envío es "activated" (disponible para transportadores)
+    // O si el envío ya está asignado a este transportador
+    if (shipment.status === 'activated' || 
+        (shipment.transporter && shipment.transporter._id.toString() === transporterId)) {
+      return res.status(200).json({ shipment });
+    } else {
+      return res.status(403).json({ 
+        message: 'No tienes acceso a este envío o no está disponible para transportadores' 
+      });
+    }
+  } catch (err) {
+    console.error('Error al obtener detalles del envío:', err);
+    res.status(500).json({ message: 'Error al obtener detalles del envío', error: err.message });
+  }
+};
+
+// Aceptar un envío como transportador
+export const acceptShipment = async (req, res) => {
+  try {
+    const shipmentId = req.params.id;
+    const transporterId = req.user.id;
+    
+    // Buscar el envío por ID
+    const shipment = await Shipment.findById(shipmentId);
+    
+    if (!shipment) {
+      return res.status(404).json({ message: 'Envío no encontrado' });
+    }
+    
+    // Verificar que el envío esté en estado "activated" y disponible para ser aceptado
+    if (shipment.status !== 'activated') {
+      return res.status(400).json({ 
+        message: 'Este envío no está disponible para ser aceptado' 
+      });
+    }
+    
+    // Verificar que el envío no tenga ya un transportador asignado
+    if (shipment.transporter) {
+      return res.status(400).json({ 
+        message: 'Este envío ya tiene un transportador asignado' 
+      });
+    }
+    
+    // Actualizar el envío: asignar transportador y cambiar estado
+    shipment.transporter = transporterId;
+    shipment.status = 'accepted';
+    
+    await shipment.save();
+    
+    // Obtener el envío actualizado con información del cliente y transportador
+    const updatedShipment = await Shipment.findById(shipmentId)
+      .populate('client', 'name email phone')
+      .populate('transporter', 'name email phone');
+    
+    res.status(200).json({ 
+      message: 'Envío aceptado exitosamente', 
+      shipment: updatedShipment 
+    });
+  } catch (err) {
+    console.error('Error al aceptar el envío:', err);
+    res.status(500).json({ message: 'Error al aceptar el envío', error: err.message });
+  }
+};
+
 export const getAvailableShipments = async (req, res) => {
   try{
     const shipments = await Shipment.find({ status: 'activated' })
