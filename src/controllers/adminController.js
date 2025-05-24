@@ -17,7 +17,9 @@ export const getUsers = async (req, res) => {
 
 export const getShipments = async (req, res) => {
   try {
-    const shipments = await Shipment.find().select('-password');
+    const shipments = await Shipment.find()
+      .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador
     res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
     res.status(500).send('Error al obtener envios');
@@ -140,7 +142,9 @@ export const searchShipment = async (req, res) => {
         { title: { $regex: term, $options: 'i' } }, 
         { description: { $regex: term, $options: 'i' } },     
       ],
-    });
+    })
+    .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+    .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador
 
     // Filtrado por usuario (cliente)
     // if (userId) {

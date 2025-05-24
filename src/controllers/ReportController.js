@@ -4,7 +4,19 @@ import mongoose from 'mongoose';
 // Obtener todos los reportes
 export const getAllReports = async (req, res) => {
     try {
-        const reports = await Report.find().populate('reportingUser reportedUser reportedShipment');
+        const reports = await Report.find()
+            .populate({
+                path: 'reportingUser',
+                select: 'name lastname email phone role'
+            })
+            .populate({
+                path: 'reportedUser',
+                select: 'name lastname email phone role'
+            })
+            .populate({
+                path: 'reportedShipment',
+                select: 'title pickupAddress deliveryAddress status'
+            });
         res.status(200).json({ reports: reports.map(report => ({ report })) });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener los reportes', error });
@@ -29,11 +41,25 @@ export const getUserReports = async (req, res) => {
 // Obtener un reporte por ID
 export const getReportById = async (req, res) => {
     try {
-        const report = await Report.findById(req.params.id).populate('reportingUser reportedUser reportedShipment');
+        const report = await Report.findById(req.params.id)
+            .populate({
+                path: 'reportingUser',
+                select: 'name lastname email phone role'
+            })
+            .populate({
+                path: 'reportedUser',
+                select: 'name lastname email phone role'
+            })
+            .populate({
+                path: 'reportedShipment',
+                select: 'title pickupAddress deliveryAddress status'
+            });
+        
         if (!report) {
             return res.status(404).json({ message: 'Reporte no encontrado' });
         }
-        res.status(200).json(report);    } catch (error) {
+        res.status(200).json(report);
+    } catch (error) {
         res.status(500).json({ message: 'Error al obtener el reporte', error });
     }
 };

@@ -8,20 +8,20 @@ const reportSchema = new mongoose.Schema({
     reportingUser: { 
         type: mongoose.Schema.Types.ObjectId, 
         required: true, 
-        refPath: 'reportingUserType' 
+        ref: 'User'  // Siempre refiere al modelo User
     },
     reportingUserType: { 
         type: String, 
         required: true, 
-        enum: ['User', 'Transporter'] 
+        enum: ['User', 'Transporter']  // Solo para diferenciar el rol del usuario
     },
     reportedUser: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        refPath: 'reportedUserType' 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'  // Siempre refiere al modelo User 
     },
     reportedUserType: { 
         type: String, 
-        enum: ['User', 'Transporter'] 
+        enum: ['User', 'Transporter']  // Solo para diferenciar el rol del usuario
     },
     reportedShipment: { 
         type: mongoose.Schema.Types.ObjectId, 

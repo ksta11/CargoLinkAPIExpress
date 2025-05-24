@@ -4,8 +4,8 @@ import Shipment from '../models/Shipment.js';
 export const getAllShipments = async (req, res) => {
   try {
     const shipments = await Shipment.find()
-      .populate('client', 'name email phone') // Populate con información básica del cliente
-      .populate('transporter', 'name email phone'); // Populate con información básica del transportador
+      .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador
     res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
   } catch (err) {
     console.error('Error al obtener envíos:', err);
@@ -20,8 +20,8 @@ export const getUserShipments = async (req, res) => {
     const shipments = await Shipment.find({
       $or: [{ client: userId }, { transporter: userId }], // Busca envíos donde el usuario sea cliente o transportador
     })
-      .populate('client', 'name email phone') // Populate con información básica del cliente
-      .populate('transporter', 'name email phone'); // Populate con información básica del transportador
+      .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador
 
     if (!shipments || shipments.length === 0) {
       return res.status(404).json({ message: 'No se encontraron envíos para este usuario' });
@@ -41,8 +41,8 @@ export const getShipmentDetailsForTransporter = async (req, res) => {
     
     // Buscar el envío por ID
     const shipment = await Shipment.findById(shipmentId)
-      .populate('client', 'name email phone') // Información básica del cliente
-      .populate('transporter', 'name email phone'); // Información básica del transportador
+      .populate('client', 'name lastname email phone') // Información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Información completa del transportador
     
     if (!shipment) {
       return res.status(404).json({ message: 'Envío no encontrado' });
@@ -96,11 +96,10 @@ export const acceptShipment = async (req, res) => {
     shipment.status = 'accepted';
     
     await shipment.save();
-    
-    // Obtener el envío actualizado con información del cliente y transportador
+      // Obtener el envío actualizado con información del cliente y transportador
     const updatedShipment = await Shipment.findById(shipmentId)
-      .populate('client', 'name email phone')
-      .populate('transporter', 'name email phone');
+      .populate('client', 'name lastname email phone')
+      .populate('transporter', 'name lastname email phone');
     
     res.status(200).json({ 
       message: 'Envío aceptado exitosamente', 
@@ -115,8 +114,8 @@ export const acceptShipment = async (req, res) => {
 export const getAvailableShipments = async (req, res) => {
   try{
     const shipments = await Shipment.find({ status: 'activated' })
-    .populate('client', 'name email phone') // Populate con información básica del cliente
-    .populate('transporter', 'name email phone'); // Populate con información básica del transportador;
+    .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+    .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador;
 
     if (!shipments || shipments.length === 0){
       return res.status(404).json({ message: 'No se encontraron envíos disponibles' });
@@ -131,10 +130,16 @@ export const getAvailableShipments = async (req, res) => {
 export const getShipment = async (req, res) => {
   try {
     const shipmentId = req.params.id; // Obtener el ID del usuario desde los parámetros de la URL
-    const shipment = await Shipment.findById(shipmentId)/*.select('-password')*/; // Excluir la contraseña
+    
+    // Buscar el envío e incluir información detallada del cliente y transportador (si existe)
+    const shipment = await Shipment.findById(shipmentId)
+      .populate('client', 'name lastname email phone') // Información detallada del cliente
+      .populate('transporter', 'name lastname email phone'); // Información detallada del transportador
+    
     if (!shipment) {
       return res.status(404).json({ message: 'Flete no encontrado' });
     }
+    
     res.status(200).json({ shipment });
   } catch (err) {
     console.error('Error al obtener flete:', err);
@@ -183,12 +188,10 @@ export const updateShipment = async (req, res) => {
     const shipment = await Shipment.findById(shipmentId);
     if (!shipment) {
       return res.status(404).json({ message: 'Envío no encontrado' });
-    }
-
-    // Actualizar el envío
+    }    // Actualizar el envío
     const updatedShipment = await Shipment.findByIdAndUpdate(shipmentId, updateData, { new: true })
-      .populate('client', 'name email phone') // Populate con información básica del cliente
-      .populate('transporter', 'name email phone'); // Populate con información básica del transportador
+      .populate('client', 'name lastname email phone') // Populate con información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Populate con información completa del transportador
 
     res.status(200).json({ message: 'Envío actualizado exitosamente', shipment: updatedShipment });
   } catch (err) {
@@ -214,6 +217,127 @@ export const deleteShipment = async (req, res) => {
   } catch (err) {
     console.error('Error al eliminar el envío:', err);
     res.status(500).json({ message: 'Error al eliminar el envío', error: err.message });
+  }
+};
+
+// Obtener envíos aceptados y en tránsito del transportador
+export const getAcceptedShipmentsForTransporter = async (req, res) => {
+  try {
+    const transporterId = req.user.id; // Obtener el ID del transportador desde el token
+
+    // Buscar envíos donde el usuario sea transportador y el estado sea 'accepted' o 'in_transit'
+    const shipments = await Shipment.find({
+      transporter: transporterId,
+      status: { $in: ['accepted', 'in_transit'] }
+    })
+      .populate('client', 'name lastname email phone') // Información completa del cliente
+      .populate('transporter', 'name lastname email phone'); // Información completa del transportador
+
+    if (!shipments || shipments.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron envíos aceptados o en tránsito para este transportador' });
+    }
+    
+    res.status(200).json({ shipments: shipments.map(shipment => ({ shipment })) });
+  } catch (err) {
+    console.error('Error al obtener envíos aceptados/en tránsito del transportador:', err);
+    res.status(500).json({ 
+      message: 'Error al obtener envíos aceptados/en tránsito del transportador', 
+      error: err.message 
+    });
+  }
+};
+
+// Confirmar la entrega de un envío
+export const confirmDelivery = async (req, res) => {
+  try {
+    const shipmentId = req.params.id;
+    const transporterId = req.user.id;
+    
+    // Buscar el envío por ID
+    const shipment = await Shipment.findById(shipmentId);
+    
+    if (!shipment) {
+      return res.status(404).json({ message: 'Envío no encontrado' });
+    }
+    
+    // Verificar que el usuario sea el transportador asignado a este envío
+    if (!shipment.transporter || shipment.transporter.toString() !== transporterId) {
+      return res.status(403).json({ 
+        message: 'No tienes permiso para confirmar la entrega de este envío' 
+      });
+    }
+    
+    // Verificar que el envío esté en estado "in_transit" o "accepted"
+    if (shipment.status !== 'in_transit' && shipment.status !== 'accepted') {
+      return res.status(400).json({ 
+        message: 'Este envío no puede ser marcado como entregado porque no está en tránsito o aceptado' 
+      });
+    }
+    
+    // Actualizar el estado del envío a "delivered"
+    shipment.status = 'delivered';
+    
+    await shipment.save();
+    
+    // Obtener el envío actualizado con información del cliente y transportador
+    const updatedShipment = await Shipment.findById(shipmentId)
+      .populate('client', 'name lastname email phone')
+      .populate('transporter', 'name lastname email phone');
+    
+    res.status(200).json({ 
+      message: 'Entrega confirmada exitosamente', 
+      shipment: updatedShipment 
+    });
+  } catch (err) {
+    console.error('Error al confirmar la entrega:', err);
+    res.status(500).json({ message: 'Error al confirmar la entrega', error: err.message });
+  }
+};
+
+// Marcar el envío como en tránsito
+export const startTransit = async (req, res) => {
+  try {
+    const shipmentId = req.params.id;
+    const transporterId = req.user.id;
+    
+    // Buscar el envío por ID
+    const shipment = await Shipment.findById(shipmentId);
+    
+    if (!shipment) {
+      return res.status(404).json({ message: 'Envío no encontrado' });
+    }
+    
+    // Verificar que el usuario sea el transportador asignado a este envío
+    if (!shipment.transporter || shipment.transporter.toString() !== transporterId) {
+      return res.status(403).json({ 
+        message: 'No tienes permiso para modificar el estado de este envío' 
+      });
+    }
+    
+    // Verificar que el envío esté en estado "accepted"
+    if (shipment.status !== 'accepted') {
+      return res.status(400).json({ 
+        message: 'Este envío no puede ser marcado como en tránsito porque no ha sido aceptado' 
+      });
+    }
+    
+    // Actualizar el estado del envío a "in_transit"
+    shipment.status = 'in_transit';
+    
+    await shipment.save();
+    
+    // Obtener el envío actualizado con información del cliente y transportador
+    const updatedShipment = await Shipment.findById(shipmentId)
+      .populate('client', 'name lastname email phone')
+      .populate('transporter', 'name lastname email phone');
+    
+    res.status(200).json({ 
+      message: 'Envío marcado como en tránsito exitosamente', 
+      shipment: updatedShipment 
+    });
+  } catch (err) {
+    console.error('Error al marcar el envío como en tránsito:', err);
+    res.status(500).json({ message: 'Error al marcar el envío como en tránsito', error: err.message });
   }
 };
 

@@ -7,7 +7,10 @@ import { getAllShipments,
     updateShipment, 
     deleteShipment,
     getShipmentDetailsForTransporter,
-    acceptShipment } from '../controllers/shipmentController.js';
+    getAcceptedShipmentsForTransporter,
+    acceptShipment,
+    startTransit,
+    confirmDelivery } from '../controllers/shipmentController.js';
 import { validateShipment, validateShipmentUpdate } from '../validators/shipmentValidator.js';
 import validateRequest from '../middlewares/validateRequest.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
@@ -22,9 +25,15 @@ router.get('/me', authMiddleware, getUserShipments);
 
 router.get('/available', authMiddleware, roleMiddleware(['transporter', 'admin']), getAvailableShipments);
 
+router.get('/accepted', authMiddleware, roleMiddleware(['transporter']), getAcceptedShipmentsForTransporter);
+
 router.get('/transporter/:id', authMiddleware, roleMiddleware(['transporter']), getShipmentDetailsForTransporter);
 
 router.post('/accept/:id', authMiddleware, roleMiddleware(['transporter']), acceptShipment);
+
+router.post('/transit/:id', authMiddleware, roleMiddleware(['transporter']), startTransit);
+
+router.post('/deliver/:id', authMiddleware, roleMiddleware(['transporter']), confirmDelivery);
 
 router.get('/:id', authMiddleware, roleMiddleware(['user', 'transporter']), verifyOwnership, getShipment);
 

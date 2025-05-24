@@ -17,7 +17,19 @@ export const getUserReports = async (userId) => {
       { reportingUser: userId },
       { reportedUser: userId }
     ]
-  }).populate('reportingUser reportedUser reportedShipment');
+  })
+  .populate({
+    path: 'reportingUser',
+    select: 'name lastname email phone role'
+  })
+  .populate({
+    path: 'reportedUser',
+    select: 'name lastname email phone role'
+  })
+  .populate({
+    path: 'reportedShipment',
+    select: 'title pickupAddress deliveryAddress status'
+  });
 };
 
 // Obtener reportes por usuario que reporta
