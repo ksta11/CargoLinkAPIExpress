@@ -176,3 +176,94 @@ export const getGeneralStats = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener estadísticas generales', error: err.message });
   }
 };
+
+export const getStatistics = async (req, res) => {
+  try {
+    // Obtener totales generales
+    const totalUsers = await User.countDocuments();
+    const totalShipments = await Shipment.countDocuments();
+    const totalReports = await Report.countDocuments();
+
+    // Calcular los últimos 6 meses
+    const currentDate = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(currentDate.getMonth() - 5);
+
+    // Generar array de fechas para los últimos 6 meses
+    const monthsData = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(currentDate.getMonth() - i);
+      date.setDate(1);
+      date.setHours(0, 0, 0, 0);
+      
+      const nextMonth = new Date(date);
+      nextMonth.setMonth(date.getMonth() + 1);
+      
+      monthsData.push({
+        date,
+        nextMonth,
+        label: date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+      });
+    }
+
+    // Obtener estadísticas mensuales de usuarios
+    const userStats = await Promise.all(
+      monthsData.map(async (month) => {
+        return await User.countDocuments({
+          createdAt: {
+            $gte: month.date,
+            $lt: month.nextMonth
+          }
+        });
+      })
+    );
+
+    // Obtener estadísticas mensuales de envíos
+    const shipmentStats = await Promise.all(
+      monthsData.map(async (month) => {
+        return await Shipment.countDocuments({
+          createdAt: {
+            $gte: month.date,
+            $lt: month.nextMonth
+          }
+        });
+      })
+    );
+
+    // Obtener estadísticas mensuales de reportes
+    const reportStats = await Promise.all(
+      monthsData.map(async (month) => {
+        return await Report.countDocuments({
+          createdAt: {
+            $gte: month.date,
+            $lt: month.nextMonth
+          }
+        });
+      })
+    );
+
+    // Preparar labels de meses en español
+    const monthLabels = monthsData.map(month => month.label);
+
+    res.status(200).json({
+      totals: {
+        users: totalUsers,
+        shipments: totalShipments,
+        reports: totalReports
+      },
+      monthly: {
+        labels: monthLabels,
+        users: userStats,
+        shipments: shipmentStats,
+        reports: reportStats
+      }
+    });
+  } catch (err) {
+    console.error('Error al obtener estadísticas:', err);
+    res.status(500).json({ 
+      message: 'Error al obtener estadísticas', 
+      error: err.message 
+    });
+  }
+};

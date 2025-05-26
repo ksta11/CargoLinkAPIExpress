@@ -18,9 +18,8 @@ const shipmentSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'activated', 'accepted', 'in_transit', 'delivered', 'cancelled'],
     default: 'pending',
-  },
-  client: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  },  client: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   transporter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-});
+}, { timestamps: true });
 
 export default mongoose.model('Shipment', shipmentSchema);

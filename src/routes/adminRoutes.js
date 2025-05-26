@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, getUser, createUser, updateUser, deleteUser, searchUsers, getShipments, searchShipment, getGeneralStats } from '../controllers/adminController.js';
+import { getUsers, getUser, createUser, updateUser, deleteUser, searchUsers, getShipments, searchShipment, getGeneralStats, getStatistics } from '../controllers/adminController.js';
 import { validateUser, validateUserUpdate } from '../validators/userValidator.js';
 import { validateShipmentUpdate } from '../validators/shipmentValidator.js';
 import validateRequest from '../middlewares/validateRequest.js';
@@ -18,6 +18,8 @@ router.get('/search', authMiddleware, roleMiddleware(['admin']), searchUsers);
 router.get('/shipments/search', authMiddleware, roleMiddleware(['admin']), searchShipment);
 
 router.get('/stats', authMiddleware, roleMiddleware(['admin']), getGeneralStats); // Obtener estadísticas generales (Admin)
+
+router.get('/statistics', authMiddleware, roleMiddleware(['admin']), getStatistics); // Obtener estadísticas detalladas mensuales (Admin)
 
 router.get('/:id', authMiddleware, roleMiddleware(['admin']), getUser);     // Obtener un usuario (Admin)
 
